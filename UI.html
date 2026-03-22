@@ -145,8 +145,28 @@
             box-shadow: 0 4px 15px rgba(255, 75, 75, 0.3);
         }
 
-        #panic-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #fff; z-index: 30000; }
-        #panic-iframe { width: 100%; height: 100%; border: none; }
+#panic-overlay { 
+    display: none; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100vw; 
+    height: 100vh; 
+    background: #fff; 
+    z-index: 30000; 
+}
+
+/* Ensure the close button is prioritized and visible */
+#panic-overlay span {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #000 !important; /* Forces black color so it's visible on white */
+    z-index: 30001; /* Higher than the overlay itself */
+}        #panic-iframe { width: 100%; height: 100%; border: none; }
 
         input[type="text"] { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 10px; }
         iframe.full-frame { width: 100%; height: 80vh; border: none; border-radius: 20px; background: #000; }
@@ -225,7 +245,10 @@
         </div>
     </main>
 
-    <div id="panic-overlay"><iframe id="panic-iframe"></iframe></div>
+   <div id="panic-overlay">
+    <span style="position:absolute; top:15px; left:15px; font-size:30px; cursor:pointer; color: black; z-index: 30001;" onclick="closePanic()">&times;</span>
+    <iframe id="panic-iframe"></iframe>
+</div>
 
     <script>
         const quotes = ["Who actually reads these?", "Keep clicking, I dare you.", "T!tan - The respect you deserve.", "Major Updates every Monday!!!", "The best unblocked site... probably.", "Mateoooooooooooooooooooo"];
@@ -292,7 +315,10 @@
                 i.style.display = i.dataset.title.toLowerCase().includes(q) ? "block" : "none";
             });
         }
-
+function closePanic() { 
+    document.getElementById("panic-overlay").style.display = "none"; 
+    document.getElementById("panic-iframe").src = "about:blank"; // Clears the iframe when closed
+}
         function launchGame(gameUrl) {
             const panicUrl = document.getElementById("panicUrlInput").value || 'https://clever.com';
             const newWin = window.open('about:blank', '_blank');
