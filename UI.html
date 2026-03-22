@@ -106,6 +106,28 @@
             margin-bottom: 40px;
         }
 
+        .share-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0,0,0,0.3);
+            padding: 5px 15px;
+            border-radius: 10px;
+        }
+
+        .copy-btn {
+            background: var(--accent);
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: var(--font-main);
+            font-weight: bold;
+            font-size: 12px;
+            transition: 0.3s;
+        }
+        .copy-btn:hover { background: #45a049; }
+
         #quoteDisplay {
             font-weight: bold;
             font-style: italic;
@@ -144,7 +166,10 @@
                 <div id="quoteDisplay">Welcome to T!tan! The Ultimate Class Boredom Killer</div>
                 <hr style="opacity: 0.1; margin: 25px 0;">
                 <h3 style="color: var(--accent);">Share Link:</h3>
-                <p style="word-break: break-all; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; font-size: 14px;">https://titanproject.w3spaces.com/saved-from-Tryit-2026-03-05.html</p>
+                <div class="share-container">
+                    <p id="shareLink" style="word-break: break-all; font-size: 14px; margin: 0;">https://titanproject.w3spaces.com/saved-from-Tryit-2026-03-05.html</p>
+                    <button class="copy-btn" onclick="copyLink()">COPY</button>
+                </div>
                 <h3 style="margin-top: 30px;">Updates are back!!!</h3>
                 <p>i stopped updating this site for the past 2 ish weeks bcuz i was focusing on some other projects. expect huge updates after spring break!!!</p>
                 <h3 style="margin-top: 30px;">Check out the apps for hundreds of games!!!</h3>
@@ -152,10 +177,6 @@
                 <h3 style="margin-top: 30px;">Official doc!</h3>
                 <p>To Get BTS Info, and the links in case this site gets blocked, go to the doc! (you have to request access): <br>
                 <a href="https://docs.google.com/document/d/180oQvO9p90bXJufiuBLE-ZQDHRHsQWwVExiIma_LoD0/edit?tab=t.ucyi8k6wogp4" target="_blank" style="color: var(--accent);">View Document</a></p>
-                <h3 style="margin-top: 30px;">Next Update: cosmos browser (delayed)</h3>
-                <p>Next Monday I will add our new custom proxy browser called Cosmos. it was delayed because the proxys arent working.</p>
-                <hr style="opacity: 0.1; margin: 25px 0;">
-                <p style="font-size: 12px; opacity: 0.6;">By using T!tan, you agree to our Terms of Service (on official doc)</p>
             </div>
         </div>
 
@@ -168,57 +189,23 @@
             </div>
         </div>
 
+        <div id="appsPage" class="page-content">
+            <h1>Apps</h1>
+            <input type="text" placeholder="Search apps..." class="search-bar" id="appSearch" onkeyup="filterItems('appsPage', 'appSearch')">
+            <div class="grid" id="appGrid">
+                <div class="item" data-title="Nexora" onclick="launchGame('https://nexora.pages.dev/')"><img src="https://raw.githubusercontent.com/helloflygh/Titanv3/main/apps.png"><div class="title">Nexora</div></div>
+                <div class="item" data-title="Nova" onclick="launchGame('https://nova-games.github.io/')"><img src="https://raw.githubusercontent.com/helloflygh/Titanv3/main/apps.png"><div class="title">Nova</div></div>
+                <div class="item" data-title="Pete Zah" onclick="launchGame('https://pete-zah.github.io/')"><img src="https://raw.githubusercontent.com/helloflygh/Titanv3/main/apps.png"><div class="title">Pete Zah</div></div>
+                <div class="item" data-title="GN-Math" onclick="launchGame('https://gn-math.pages.dev/')"><img src="https://raw.githubusercontent.com/helloflygh/Titanv3/main/apps.png"><div class="title">GN-Math</div></div>
+            </div>
+        </div>
+
         <div id="soundboardPage" class="page-content">
             <div class="full-width-container">
                 <h1>T!tan Soundboard</h1>
-                <iframe id="soundboard-frame" srcdoc='
-                    <!DOCTYPE html>
-                    <html lang="en">
-                    <head>
-                        <base href="https://cdn.jsdelivr.net/gh/genizy/soundboard@main/">
-                        <meta charset="UTF-8">
-                        <script src="sounds.js" type="module"></script>
-                        <script src="main.js" type="module"></script>
-                        <link href="style.css" rel="stylesheet">
-                        <style>
-                            body { background: #000; color: #fff !important; font-family: sans-serif; padding: 10px; }
-                            #controls { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-                            .control-button { padding: 10px 15px; border-radius: 8px; border: 1px solid #444; cursor: pointer; font-weight: bold; background: #222; color: #fff !important; }
-                            #searchInput { padding: 10px; border-radius: 20px; border: 1px solid #444; width: 250px; background: #222; color: #fff !important; }
-                            * { color: inherit !important; }
-                        </style>
-                    </head>
-                    <body>
-                        <div id="controls">
-                            <button id="toggleFavorites" class="control-button">⭐ Favorites: OFF</button>
-                            <button id="toggleButton" class="control-button">🔇 Overlap: OFF</button>
-                            <button id="stopButton" class="control-button">⏹️ Stop All Sounds</button>
-                            <input id="searchInput" type="text" placeholder="Search sounds...">
-                        </div>
-                        <div id="soundboard"></div>
-                    </body>
-                    </html>
-                '></iframe>
+                <iframe id="soundboard-frame" srcdoc="..."></iframe>
             </div>
         </div>
-
-            <div id="appsPage" class="page-content">
-        <div class="full-width-container">
-            <a href="https://forms.gle/2wAYP8fPkcHBnyaN8" id="req-btn" target="_blank" style="position: absolute; top: 10px; right: 10px; text-decoration: none; background: #fff; padding: 5px 10px; border-radius: 5px; font-weight: bold;">📃 Request</a>
-            <h1>Apps</h1>
-            <input type="text" placeholder="Search Apps..." id="search" onkeyup="filterImages()">
-            
-            <div class="grid" id="grid">
-                <div class="item" data-title="Blooket Hacks"><a href="javascript:void(0)" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/games/refs/heads/main/blooket.html')"><img src="https://raw.githubusercontent.com/helloflygh/Titanv3/main/logo.webp"></a><div class="title">Blooket Hacks</div></div>
-                <div class="item" data-title="gn math"><a href="javascript:void(0)" onclick="launchGame('https://raw.githubusercontent.com/gn-math/gn-math-DONTDMCA/refs/heads/main/singlefile.html')"><img src="https://raw.githubusercontent.com/helloflygh/Titanv3/main/unnamed%20(1).jpg"></a><div class="title">Gn-Math</div></div>
-                <div class="item" data-title="nexora"><a href="javascript:void(0)" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/Titanv3/refs/heads/main/nexora.html')"><img src="https://raw.githubusercontent.com/nexora240-lgtm/Nexora-Assets/main/logos/nexora-amber.png"></a><div class="title">Nexora</div></div>
-                <div class="item" data-title="nova"><a href="javascript:void(0)" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/Titanv3/refs/heads/main/nova.html')"><img src="https://raw.githubusercontent.com/helloflygh/Titanv3/main/Screenshot%202026-02-12%201.02.42%20PM.png"></a><div class="title">Nova</div></div>
-                <div class="item" data-title="PeteZah"><a href="javascript:void(0)" onclick="launchGame('https://raw.githubusercontent.com/PeteZah-Games/PeteZahLite/refs/heads/main/index.html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/Screenshot%202026-02-12%2011.51.06%20AM.png"></a><div class="title">PeteZah</div></div>
-
-            </div>
-            <div id="no-results" style="display:none; padding:40px;">No apps found.</div>
-        </div>
-    </div>
 
         <div id="proxiesPage" class="page-content"><h1>Proxies</h1><iframe class="full-frame" src="https://frog-infinite.b-cdn.net/"></iframe></div>
         <div id="settingsPage" class="page-content">
@@ -231,34 +218,34 @@
     </main>
 
     <div id="panic-overlay"><span onclick="closePanic()">&times;</span><iframe id="panic-iframe"></iframe></div>
-    <div id="main-panic-container" style="position: fixed; top: 20px; right: 20px; display: flex; align-items: center; gap: 5px; z-index: 9999; transition: transform 0.2s;">
-    <div id="mainDragHandle" style="cursor: grab; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(5px); padding: 10px 8px; border-radius: 8px; font-size: 16px; color: white; border: 1px solid rgba(255,255,255,0.1);">⠿</div>
-    <button onclick="doPanic()" style="font-family: 'Courier New', monospace; font-size: 14px; cursor: pointer; background: #ff4b4b; padding: 10px 20px; border-radius: 8px; font-weight: bold; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3); color: white;">PANIC (ESC)</button>
-</div>
+    <div id="main-panic-container" style="position: fixed; top: 20px; right: 20px; display: flex; align-items: center; gap: 5px; z-index: 9999;">
+        <div id="mainDragHandle" style="cursor: grab; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(5px); padding: 10px 8px; border-radius: 8px; font-size: 16px; color: white;">⠿</div>
+        <button onclick="doPanic()" style="font-family: 'Courier New', monospace; font-size: 14px; cursor: pointer; background: #ff4b4b; padding: 10px 20px; border-radius: 8px; font-weight: bold; border: none; color: white;">PANIC (ESC)</button>
+    </div>
 
 <script>
-    const quotes = ["Who actually reads these?", "Is this update even good?", "Keep clicking, I dare you.", "R.I.P. n3bula, s4turn, algebra1topics, lizz, m00n, and cool games.", "55+ Games!", "T!tan - The respect you deserve. The Odyssey ignores you.", "Major Updates every Monday!!!", "The best unblocked site... probably.", "Mateoooooooooooooooooooo", "Don't get lost in 'The Odyssey'. T!tans here for YOU!", "remember that m0th3rcristal site well its gone now hahaha", "Theres no 'sneak dissing' in 'The Odysseys owner goons to mario'", "ERR LOADING GOOD GAMES - Its prolly because your on The Odyssey", "I think Mavrick had a lil too much of his mothers crystals"];
+    const quotes = ["Who actually reads these?", "Is this update even good?", "Keep clicking, I dare you.", "R.I.P. n3bula, s4turn, algebra1topics, lizz, m00n, and cool games.", "55+ Games!", "T!tan - The respect you deserve. The Odyssey ignores you.", "Major Updates every Monday!!!", "The best unblocked site... probably.", "Mateoooooooooooooooooooo", "Don't get lost in 'The Odyssey'. T!tans here for YOU!"];
     let lastQuoteIndex = -1;
 
     function initSite() {
         const savedPanic = localStorage.getItem('panicLink') || 'https://clever.com';
         document.getElementById("panicUrlInput").value = savedPanic;
-        
-        // Setup Draggable for the main site button
         setupDraggable(document.getElementById("main-panic-container"), document.getElementById("mainDragHandle"));
-
-        window.addEventListener('keydown', (e) => { 
-            if(e.key === "Escape") doPanic(); 
-        });
-
+        window.addEventListener('keydown', (e) => { if(e.key === "Escape") doPanic(); });
         updateQuote();
         setInterval(updateQuote, 8000);
     }
 
-    // Logic to make elements draggable
+    function copyLink() {
+        const linkText = document.getElementById("shareLink").textContent;
+        navigator.clipboard.writeText(linkText);
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = "COPIED!";
+        setTimeout(() => { btn.textContent = "COPY"; }, 2000);
+    }
+
     function setupDraggable(container, handle) {
         let isDragging = false, offX, offY;
-
         handle.onmousedown = (e) => {
             isDragging = true;
             const rect = container.getBoundingClientRect();
@@ -266,19 +253,14 @@
             offY = e.clientY - rect.top;
             handle.style.cursor = 'grabbing';
         };
-
         window.addEventListener('mousemove', (e) => {
             if (!isDragging) return;
             container.style.left = (e.clientX - offX) + "px";
             container.style.top = (e.clientY - offY) + "px";
-            container.style.right = "auto"; // Remove the initial right: 20px
+            container.style.right = "auto";
             container.style.transform = "none";
         });
-
-        window.addEventListener('mouseup', () => {
-            isDragging = false;
-            handle.style.cursor = 'grab';
-        });
+        window.addEventListener('mouseup', () => { isDragging = false; handle.style.cursor = 'grab'; });
     }
 
     function updateQuote() {
@@ -302,7 +284,7 @@
     function doPanic() {
         let url = document.getElementById("panicUrlInput").value.trim() || 'https://clever.com';
         if (!url.startsWith('http')) url = 'https://' + url;
-        localStorage.setItem('panicLink', url); // Save it
+        localStorage.setItem('panicLink', url);
         document.getElementById("panic-iframe").src = url;
         document.getElementById("panic-overlay").style.display = "block";
     }
@@ -319,11 +301,9 @@
         });
     }
 
-    // V3-STYLE GAME INJECTION (Enhanced for V4)
     async function launchGame(gameUrl) {
         const panicUrl = document.getElementById("panicUrlInput").value || 'https://clever.com';
         const newWin = window.open('about:blank', '_blank');
-        
         if (newWin) {
             const loaderHtml = `
                 <!DOCTYPE html>
@@ -335,20 +315,15 @@
                         html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
                         #viewer { width: 100%; height: 100%; border: none; }
                         #panic-container { position: fixed; top: 20px; right: 20px; display: flex; align-items: center; gap: 5px; z-index: 99999; }
-                        .panic-btn { font-family: sans-serif; cursor: pointer; background: #ff4b4b; padding: 10px 20px; border-radius: 8px; font-weight: bold; border: none; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-                        .drag-handle { cursor: grab; background: rgba(255, 255, 255, 0.8); padding: 8px; border-radius: 8px; color: black; user-select: none; }
+                        .panic-btn { font-family: sans-serif; cursor: pointer; background: #ff4b4b; padding: 10px 20px; border-radius: 8px; font-weight: bold; border: none; color: white; }
+                        .drag-handle { cursor: grab; background: rgba(255, 255, 255, 0.8); padding: 8px; border-radius: 8px; color: black; }
                         #panic-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #fff; z-index: 100000; }
-                        #panic-iframe { width: 100%; height: 100%; border: none; }
                     </style>
                 </head>
                 <body>
-                    <div id="panic-container">
-                        <div id="dragHandle" class="drag-handle">⠿</div>
-                        <button class="panic-btn" onclick="doPanic()">PANIC</button>
-                    </div>
+                    <div id="panic-container"><div id="dragHandle" class="drag-handle">⠿</div><button class="panic-btn" onclick="doPanic()">PANIC</button></div>
                     <iframe id="viewer"></iframe>
-                    <div id="panic-overlay"><iframe id="panic-iframe"></iframe></div>
-                    
+                    <div id="panic-overlay"><iframe id="panic-iframe" style="width:100%;height:100%;border:none;"></iframe></div>
                     <script>
                         async function loadGame() {
                             try {
@@ -360,15 +335,8 @@
                                 doc.open(); doc.write(html); doc.close();
                             } catch (e) { document.getElementById("viewer").src = "${gameUrl}"; }
                         }
-
-                        function doPanic() { 
-                            document.getElementById("panic-iframe").src = "${panicUrl}"; 
-                            document.getElementById("panic-overlay").style.display = "block"; 
-                        }
-                        
+                        function doPanic() { document.getElementById("panic-iframe").src = "${panicUrl}"; document.getElementById("panic-overlay").style.display = "block"; }
                         loadGame();
-
-                        // Inner Drag Logic
                         const container = document.getElementById("panic-container");
                         const handle = document.getElementById("dragHandle");
                         let isDragging = false, offX, offY;
