@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T!tan V4</title>
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1); 
+            --glass-blur: blur(15px);
+            --font-main: 'Courier New', Courier, monospace;
+            --sidebar-width: 80px;
+            --accent: #4CAF50;
+        }
+
+        * { color: #ffffff; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-main);
+            margin: 0; padding: 0;
+            background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: var(--glass-blur);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 30px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+        }
+
+        .side-icon {
+            width: 50px; height: 50px;
+            margin-bottom: 25px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 15px;
+        }
+
+        .side-icon img { width: 28px; height: 28px; filter: invert(1); opacity: 0.7; }
+        .side-icon:hover { transform: scale(1.1); background: rgba(255,255,255,0.15); }
+        .side-icon:hover img { opacity: 1; }
+
+        /* --- Content Area --- */
+        .main-wrapper {
+            flex-grow: 1;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 60px 40px;
+            scroll-behavior: smooth;
+        }
+
+        .page-content { display: none; width: 100%; flex-direction: column; align-items: center; }
+        .active-page { display: flex; animation: fadeIn 0.4s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- UI Elements --- */
+        .search-bar {
+            width: 100%; max-width: 600px;
+            padding: 15px 25px;
+            background: var(--glass-bg);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 30px;
+            outline: none;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .grid { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+            gap: 20px; width: 100%; max-width: 1200px;
+        }
+
+        .item { 
+            background: var(--glass-bg); border-radius: 18px; 
+            overflow: hidden; aspect-ratio: 1; transition: 0.3s; 
+            cursor: pointer; position: relative; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .item:hover { transform: translateY(-8px); background: rgba(255,255,255,0.2); border-color: var(--accent); }
+        .item img { width: 100%; height: 100%; object-fit: cover; }
+        .item .title { 
+            position: absolute; bottom: 0; width: 100%; 
+            background: rgba(0,0,0,0.8); padding: 8px; 
+            font-size: 11px; text-align: center; font-weight: bold;
+        }
+
+        /* --- Home Box --- */
+        .home-card {
+            background: var(--glass-bg);
+            padding: 40px; border-radius: 25px;
+            max-width: 800px; width: 100%;
+            text-align: left; border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        #quoteDisplay { font-style: italic; font-size: 20px; color: var(--accent); min-height: 30px; transition: opacity 0.5s; }
+
+        /* --- Copy Button Styles --- */
+        .copy-container {
+            display: flex;
+            align-items: center;
+            background: rgba(0,0,0,0.3);
+            padding: 10px 15px;
+            border-radius: 12px;
+            margin-top: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            width: fit-content;
+        }
+
+        .copy-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-left: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover { background: #3d8b40; }
+
+        /* --- Panic Overlay --- */
+        #panic-container {
+            position: fixed; top: 20px; right: 20px;
+            z-index: 10000; display: flex; gap: 10px;
+        }
+        .panic-btn {
+            background: #ff4b4b; border: none; padding: 10px 20px;
+            border-radius: 10px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 75, 75, 0.3);
+        }
+
+        #panic-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #fff; z-index: 30000; }
+        #panic-iframe { width: 100%; height: 100%; border: none; }
+
+        input[type="text"] { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 10px; }
+        iframe.full-frame { width: 100%; height: 80vh; border: none; border-radius: 20px; background: #000; }
+    </style>
+</head>
+<body onload="initSite()">
+
+    <nav class="sidebar">
+        <div class="side-icon" onclick="changeContent('homePage')"><img src="https://raw.githubusercontent.com/helloflygh/Titanv3/main/T!tan-sidebar-logo.png"></div>
+        <div class="side-icon" onclick="changeContent('gamesPage')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/pngimg.com%20-%20gamepad_PNG58.png"></div>
+        <div class="side-icon" onclick="changeContent('appsPage')"><img src="https://raw.githubusercontent.com/helloflygh/Titanv3/main/apps.png"></div>
+        <div class="side-icon" onclick="changeContent('proxiesPage')"><img src="https://raw.githubusercontent.com/helloflygh/Titanv3/main/proxies.png"></div>
+        <div class="side-icon" onclick="changeContent('settingsPage')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/settings-icon.png"></div>
+    </nav>
+
+    <div id="panic-container">
+        <button class="panic-btn" onclick="doPanic()">PANIC (ESC)</button>
+    </div>
+
+    <main class="main-wrapper">
+        <div id="homePage" class="page-content active-page">
+            <div class="home-card">
+                <h1 style="font-size: 3rem; margin: 0;">T!tan V4</h1>
+                <p id="quoteDisplay">Loading quote...</p>
+                <hr style="opacity: 0.1; margin: 20px 0;">
+                <h3>Version 4.0.0 "Aurora"</h3>
+                <p>Performance optimized. Static rendering. Improved Stealth.</p>
+                
+                <p><b>Quick Link:</b></p>
+                <div class="copy-container">
+                    <span id="linkText">https://titanproject.w3spaces.com</span>
+                    <button class="copy-btn" id="copyBtn" onclick="copyLink()">Copy</button>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; margin-top: 25px;">
+                    <p><b>Updates:</b> Sidebar navigation restored. Quicklink copy system added. Library synced with V3 database.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="gamesPage" class="page-content">
+            <h1>Games</h1>
+            <input type="text" placeholder="Search for a game..." class="search-bar" id="gameSearch" onkeyup="filterItems('gamesPage', 'gameSearch')">
+            <div class="grid" id="gameGrid">
+                <div class="item" data-title="1v1 LOL" onclick="launchGame('https://raw.githubusercontent.com/CoolDude2349/Offline-Single-File-Games/master/offline/1v1.lol.html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/1v1lol.jpeg"><div class="title">1v1 LOL</div></div>
+                <div class="item" data-title="3Dash" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/games/main/3dash.html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/3dash.jpeg"><div class="title">3Dash</div></div>
+                <div class="item" data-title="ADOFAI" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/Titanv3/main/adofai.html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/download%20(35).jpeg"><div class="title">ADOFAI</div></div>
+                <div class="item" data-title="Bitlife" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/Titanv3/main/bitlife.html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/download%20(36).jpeg"><div class="title">Bitlife</div></div>
+                <div class="item" data-title="Cookie Clicker" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/Titanv3/main/cookie-clicker.html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/download%20(37).jpeg"><div class="title">Cookie Clicker</div></div>
+                <div class="item" data-title="Drift Hunters" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/Titanv3/main/drift-hunters.html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/download%20(38).jpeg"><div class="title">Drift Hunters</div></div>
+                <div class="item" data-title="Drive Mad" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/Titanv3/main/drive-mad.html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/download%20(39).jpeg"><div class="title">Drive Mad</div></div>
+                <div class="item" data-title="FNaF 1" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/games/main/Five%20Nights%20at%20Freddy\'s%20(1).html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/Screenshot%202025-12-26%2010.22.26%20AM.png"><div class="title">FNaF 1</div></div>
+                <div class="item" data-title="FNaF 2" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/Titanv3/main/fnaf2.html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/download%20(40).jpeg"><div class="title">FNaF 2</div></div>
+                <div class="item" data-title="FNaF 3" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/Titanv3/main/fnaf3.html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/download%20(41).jpeg"><div class="title">FNaF 3</div></div>
+                <div class="item" data-title="FNaF 4" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/Titanv3/main/fnaf4.html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/download%20(42).jpeg"><div class="title">FNaF 4</div></div>
+                <div class="item" data-title="Geometry Dash" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/Titanv3/main/geometry-dash.html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/download%20(43).jpeg"><div class="title">Geometry Dash</div></div>
+                <div class="item" data-title="Minecraft" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/Titanv3/main/minecraft.html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/download%20(44).jpeg"><div class="title">Minecraft</div></div>
+                <div class="item" data-title="Retro Bowl" onclick="launchGame('https://raw.githubusercontent.com/CoolDude2349/Offline-Single-File-Games/master/offline/retrobowl.html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/unnamed.png"><div class="title">Retro Bowl</div></div>
+                <div class="item" data-title="Slope" onclick="launchGame('https://raw.githubusercontent.com/CoolDude2349/Offline-Single-File-Games/master/offline/slope.html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/download%20(4).png"><div class="title">Slope</div></div>
+                <div class="item" data-title="Subway Surfers" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/Titanv3/main/subway-surfers.html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/download%20(45).jpeg"><div class="title">Subway Surfers</div></div>
+                <div class="item" data-title="Tetris" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/Titanv3/main/tetris.html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/download%20(46).jpeg"><div class="title">Tetris</div></div>
+            </div>
+        </div>
+
+        <div id="appsPage" class="page-content">
+            <h1>Apps</h1>
+            <div class="grid">
+                <div class="item" data-title="Nexora" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/Titanv3/refs/heads/main/nexora.html')"><img src="https://raw.githubusercontent.com/nexora240-lgtm/Nexora-Assets/main/logos/nexora-amber.png"><div class="title">Nexora</div></div>
+                <div class="item" data-title="Blooket Hacks" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/games/refs/heads/main/blooket.html')"><img src="https://raw.githubusercontent.com/helloflygh/Titanv3/main/logo.webp"><div class="title">Blooket Hacks</div></div>
+            </div>
+        </div>
+
+        <div id="proxiesPage" class="page-content">
+            <h1>Proxies</h1>
+            <iframe class="full-frame" src="https://frog-infinite.b-cdn.net/"></iframe>
+        </div>
+
+        <div id="settingsPage" class="page-content">
+            <div class="home-card">
+                <h2>Settings</h2>
+                <div style="margin-bottom: 20px;">
+                    <label>Panic URL:</label><br>
+                    <input type="text" id="panicUrlInput" style="width:100%; margin-top:10px;" onchange="saveSettings()" placeholder="https://clever.com">
+                </div>
+                <div>
+                    <input type="checkbox" id="panicTabToggle" onchange="saveSettings()"> <label>Open Panic in New Tab</label>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="panic-overlay"><iframe id="panic-iframe"></iframe></div>
+
+    <script>
+        const quotes = ["Who actually reads these?", "Keep clicking, I dare you.", "T!tan - The respect you deserve.", "Major Updates every Monday!!!", "The best unblocked site... probably.", "Mateoooooooooooooooooooo"];
+        let lastQuoteIndex = -1;
+
+        function initSite() {
+            document.getElementById("panicUrlInput").value = localStorage.getItem('panicLink') || 'https://clever.com';
+            document.getElementById("panicTabToggle").checked = localStorage.getItem('panicTabEnabled') === 'true';
+            updateQuote();
+            setInterval(updateQuote, 6000);
+            window.addEventListener('keydown', (e) => { if(e.key === "Escape") doPanic(); });
+        }
+
+        function copyLink() {
+            const link = document.getElementById('linkText').textContent;
+            const btn = document.getElementById('copyBtn');
+            navigator.clipboard.writeText(link).then(() => {
+                btn.textContent = "Copied!";
+                btn.style.background = "#2e7d32";
+                setTimeout(() => {
+                    btn.textContent = "Copy";
+                    btn.style.background = "var(--accent)";
+                }, 2000);
+            });
+        }
+
+        function updateQuote() {
+            const display = document.getElementById("quoteDisplay");
+            if(!display) return;
+            display.style.opacity = 0;
+            setTimeout(() => {
+                let newIndex;
+                do { newIndex = Math.floor(Math.random() * quotes.length); } while (newIndex === lastQuoteIndex);
+                lastQuoteIndex = newIndex;
+                display.textContent = quotes[newIndex];
+                display.style.opacity = 1;
+            }, 500);
+        }
+
+        function changeContent(id) { 
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active-page')); 
+            document.getElementById(id).classList.add('active-page'); 
+        }
+
+        function saveSettings() {
+            localStorage.setItem('panicLink', document.getElementById("panicUrlInput").value);
+            localStorage.setItem('panicTabEnabled', document.getElementById("panicTabToggle").checked);
+        }
+
+        function doPanic() {
+            let url = document.getElementById("panicUrlInput").value.trim() || 'https://clever.com';
+            if (!url.startsWith('http')) url = 'https://' + url;
+            if (document.getElementById("panicTabToggle").checked) {
+                window.open(url, '_blank');
+            } else {
+                document.getElementById("panic-iframe").src = url;
+                document.getElementById("panic-overlay").style.display = "block";
+            }
+        }
+
+        function filterItems(pageId, inputId) {
+            let q = document.getElementById(inputId).value.toLowerCase();
+            document.querySelectorAll(`#${pageId} .item`).forEach(i => {
+                i.style.display = i.dataset.title.toLowerCase().includes(q) ? "block" : "none";
+            });
+        }
+
+        function launchGame(gameUrl) {
+            const panicUrl = document.getElementById("panicUrlInput").value || 'https://clever.com';
+            const newWin = window.open('about:blank', '_blank');
+            if (newWin) {
+                const loaderHtml = `
+                    <html>
+                    <head><title>Clever | Portal</title>
+                    <style>body,html{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;}</style>
+                    </head>
+                    <body>
+                        <iframe id="v" src="about:blank" style="width:100%;height:100%;border:none;"></iframe>
+                        <script>
+                            async function load(){
+                                const r = await fetch("${gameUrl}");
+                                let h = await r.text();
+                                const b = "${gameUrl}".substring(0, "${gameUrl}".lastIndexOf("/") + 1);
+                                h = h.replace("<head>", '<head><base href="' + b + '">');
+                                const d = document.getElementById("v").contentDocument;
+                                d.open(); d.write(h); d.close();
+                            }
+                            load();
+                            window.addEventListener('keydown', (e) => { if(e.key === "Escape") window.location.href="${panicUrl}"; });
+                        <\/script>
+                    </body></html>`;
+                newWin.document.write(loaderHtml);
+                newWin.document.close();
+            }
+        }
+    </script>
+</body>
+</html>
