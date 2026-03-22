@@ -202,7 +202,24 @@
             </div>
         </div>
 
-        <div id="appsPage" class="page-content"><h1>Apps</h1><div class="grid"></div></div>
+            <div id="appsPage" class="page-content">
+        <div class="full-width-container">
+            <a href="https://forms.gle/2wAYP8fPkcHBnyaN8" id="req-btn" target="_blank" style="position: absolute; top: 10px; right: 10px; text-decoration: none; background: #fff; padding: 5px 10px; border-radius: 5px; font-weight: bold;">📃 Request</a>
+            <h1>Apps</h1>
+            <input type="text" placeholder="Search Apps..." id="search" onkeyup="filterImages()">
+            
+            <div class="grid" id="grid">
+                <div class="item" data-title="Blooket Hacks"><a href="javascript:void(0)" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/games/refs/heads/main/blooket.html')"><img src="https://raw.githubusercontent.com/helloflygh/Titanv3/main/logo.webp"></a><div class="title">Blooket Hacks</div></div>
+                <div class="item" data-title="gn math"><a href="javascript:void(0)" onclick="launchGame('https://raw.githubusercontent.com/gn-math/gn-math-DONTDMCA/refs/heads/main/singlefile.html')"><img src="https://raw.githubusercontent.com/helloflygh/Titanv3/main/unnamed%20(1).jpg"></a><div class="title">Gn-Math</div></div>
+                <div class="item" data-title="nexora"><a href="javascript:void(0)" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/Titanv3/refs/heads/main/nexora.html')"><img src="https://raw.githubusercontent.com/nexora240-lgtm/Nexora-Assets/main/logos/nexora-amber.png"></a><div class="title">Nexora</div></div>
+                <div class="item" data-title="nova"><a href="javascript:void(0)" onclick="launchGame('https://raw.githubusercontent.com/helloflygh/Titanv3/refs/heads/main/nova.html')"><img src="https://raw.githubusercontent.com/helloflygh/Titanv3/main/Screenshot%202026-02-12%201.02.42%20PM.png"></a><div class="title">Nova</div></div>
+                <div class="item" data-title="PeteZah"><a href="javascript:void(0)" onclick="launchGame('https://raw.githubusercontent.com/PeteZah-Games/PeteZahLite/refs/heads/main/index.html')"><img src="https://raw.githubusercontent.com/helloflygh/games/main/Screenshot%202026-02-12%2011.51.06%20AM.png"></a><div class="title">PeteZah</div></div>
+
+            </div>
+            <div id="no-results" style="display:none; padding:40px;">No apps found.</div>
+        </div>
+    </div>
+
         <div id="proxiesPage" class="page-content"><h1>Proxies</h1><iframe class="full-frame" src="https://frog-infinite.b-cdn.net/"></iframe></div>
         <div id="settingsPage" class="page-content">
             <div class="home-card">
